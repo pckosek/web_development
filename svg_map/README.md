@@ -16,7 +16,7 @@ all_states.onclick = function(ev) {
 
 The html element for the individual state that was clicked on is teased out of the event in the line:
 ```
-	var this_state = ev.target;
+var this_state = ev.target;
 ```
 
-f
+finally, the bounding box for the state is determined, and the svg viewBox is reassigned to show the state.
