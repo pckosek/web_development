@@ -2,7 +2,7 @@
 
 ## This repo is being set up as part of a lecture series in client side Web Development
 
-For each of these files there is a video lecture available. These video lectures 
+For each of these files there is a video lecture available. The content is not grouped categorically, rather it progresses in complexity.
 
  - 01_skeleton ([Lecture](https://www.youtube.com/watch?v=ljYvHLoLhBA)) - the basic html skeleton of our game
  - 02_basic_event ([Lecture](https://www.youtube.com/watch?v=xDgOMfJxlPg)) - preliminary client-side javascript that responds to click events
