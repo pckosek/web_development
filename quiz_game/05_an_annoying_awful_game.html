@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Quiz Game</title>
+	<style type="text/css">
+		#resp_section {
+			background-color: #EEE;
+			margin-top: 100px;
+			clear: both;
+		}
+		#pseudoButtons li {
+			float: left;
+			list-style: none;
+			text-align: center;
+			background-color: #D3D3D3;
+			margin-right: 30px;
+			width: 150px;
+			line-height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id="main_section">
+		<h3>I am thinking of a random number - pick one!!!</h3>
+		<ul id="pseudoButtons">
+			<li my_data=1>One</li>
+			<li my_data=2>Two</li>
+			<li my_data=3>Three</li>
+			<li my_data=4>Four</li>
+		</ul>
+
+	</div>
+	<div id="resp_section">
+		<span id="response"></span>
+	</div>		
+
+	<script type="text/javascript">
+
+		var nl_button_list = document.querySelectorAll('#pseudoButtons > li');
+		var ar_button_list = Array.from(nl_button_list);
+
+		ar_button_list.forEach( function(elem){
+			elem.addEventListener("click", btn_click);
+		})
+
+		function btn_click() {
+			if (game_object.game_in_session) {
+				var response_elem = document.getElementById('response');
+				var choice = this.getAttribute('my_data');
+
+				if (game_object.correct_answer==choice) {
+					//correct
+					this.style['background-color'] = "green"
+					response_elem.innerHTML = "WIN";
+					end_game(game_object);
+
+				} else {
+					//incorrect
+					this.style['background-color'] = "red"
+					response_elem.innerHTML = "LOSE";
+					end_game(game_object);
+				}
+			}
+		}
+
+		var game_object = {
+			'game_in_session' : null,
+			'correct_answer' : null
+		};
+
+		init_game(game_object, ar_button_list);
+
+		function init_game(game_object, ar_button_list) {
+			game_object.game_in_session = true;
+			var choices = ar_button_list.map( function(elem) {
+   				return elem.getAttribute('my_data');
+			})
+			var choice_number = Math.floor( choices.length * Math.random() );
+			console.log(choice_number)
+			game_object.correct_answer = choices[choice_number];
+
+		}
+		function end_game(game_object) {
+			game_object.game_in_session = false;
+		}
+
+	</script>
+</body>
+</html>

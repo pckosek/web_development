@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Quiz Game</title>
+	<style type="text/css">
+
+		div {
+			text-align: center;
+		}
+		
+		ul {
+			margin: auto;   /*working with containing div, this centers content*/
+			list-style: none;	/*to remove dot buttons*/
+			padding: 0; /*to remove padding at start*/
+			display: flex;
+		    align-items: flex-start;
+			flex-wrap: wrap;  /*so not all in one row*/
+			line-height: 50px; /*to set line height*/
+		}
+		.questions {
+			width: 720px;
+			border: 2px solid #AAA;
+		}
+		.controls {
+			width: 360px;
+		}
+		ul li {
+			width: 150px;
+			margin: 15px;
+			background-color: #D3D3D3;
+		}
+		#btn_start {
+			background-color: green;
+		}
+		#btn_reset {
+			background-color: #BBB; 
+		}
+
+	</style>
+</head>
+<body>
+	<div id="main_section">
+		<h3>I am thinking of a random number - pick one!!!</h3>
+		<ul class="questions">
+			<li my_data=a guessed=false>One</li>
+			<li my_data=b guessed=false>Two</li>
+			<li my_data=c guessed=false>Three</li>
+			<li my_data=d guessed=false>Four</li>
+			<li my_data=e guessed=false>Five</li>
+			<li my_data=f guessed=false>Six</li>
+			<li my_data=g guessed=false>Seven</li>
+		</ul>
+
+	</div>
+	<div id="resp_section">
+		<ul class="controls">
+			<li id="btn_start" onclick="init_game()">START</li>
+			<li id="btn_reset" onclick="reset_game()">RESET</li>
+		</ul>
+		<span id="response"></span>
+	</div>		
+
+	<script type="text/javascript">
+		const UNSTARTED = 0;
+		const RUNNING = 1;
+		const FINISHED = 2;
+
+		var nl_button_list = document.querySelectorAll('.questions > li');
+		var ar_button_list = Array.from(nl_button_list);
+
+		ar_button_list.forEach( function(elem){
+			elem.addEventListener("click", btn_click);
+		})
+
+		function btn_click() {
+			if (game_object.lifecycle === RUNNING) {
+				var response_elem = document.getElementById('response');
+				var choice = this.getAttribute('my_data');
+
+				if (game_object.correct_answer==choice) {
+					//correct
+					this.style['background-color'] = "green"
+					response_elem.innerHTML = "WIN";
+					end_game(game_object);
+
+				} else {
+					//incorrect
+					this.style['background-color'] = "red"
+					response_elem.innerHTML = "LOSE";
+					end_game(game_object);
+				}
+			}
+		}
+
+		/* THIS IS THE OBJECT THAT CONTROLS THE GAME STATE */
+
+		var game_object = {
+			'lifecycle' : UNSTARTED,
+			'correct_answer' : null,
+			'attempts_remaining' : null
+		};
+
+
+		/* GAME LIFECYCLE TRANSITION METHODS */
+
+		function init_game() {
+			if (game_object.lifecycle === UNSTARTED) {
+				
+				// adjust lifecycle
+				game_object.lifecycle = RUNNING;
+
+				// change start button display
+				var b = document.getElementById('btn_start');
+				b.style.backgroundColor = "#4E7EFF";
+
+				// choose a right answer
+				var choices = ar_button_list.map( function(elem) {
+	   				return elem.getAttribute('my_data');
+				})
+				var choice_number = Math.floor( choices.length * Math.random() );
+				game_object.correct_answer = choices[choice_number];
+				
+				// log the right answer
+				console.log( game_object.correct_answer )
+			}
+
+		}
+		function end_game(game_object) {
+
+			// make the start button appear inactive
+			var b = document.getElementById('btn_start');
+			b.style.backgroundColor = "#BBB";
+
+			// make the reset button appear active
+			var r = document.getElementById('btn_reset');
+			r.style.backgroundColor = "#FF75FF"
+
+			game_object.lifecycle = FINISHED;
+		}
+
+
+		function reset_game() {
+
+			if (game_object.lifecycle === FINISHED) {
+
+				// clear all the buttons
+				ar_button_list.forEach( function(elem){
+					elem.style.backgroundColor="#D3D3D3"
+				});
+				// clear the response
+				document.getElementById('response').innerHTML="";
+
+				// make the start button green
+				var b = document.getElementById('btn_start');
+				b.style.backgroundColor = "green";
+				
+				// make the reset button grey
+				var r = document.getElementById('btn_reset');
+				r.style.backgroundColor = "#BBB"
+
+				// reset the game state
+				game_object.lifecycle = UNSTARTED;
+			}
+		}
+	</script>
+</body>
+</html>

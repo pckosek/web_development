@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Quiz Game</title>
+	<style type="text/css">
+		#pseudoButtons li {
+			float: left;
+			list-style: none;
+			text-align: center;
+			background-color: #D3D3D3;
+			margin-right: 30px;
+			width: 150px;
+			line-height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id="main_section">
+		<h3>I am thinking of a random number - pick one!!!</h3>
+		<ul id="pseudoButtons">
+			<li>One</li>
+			<li>Two</li>
+			<li>Three</li>
+			<li>Four</li>
+		</ul>
+	</div>
+	<div id="resp_section">
+		<span id="response"></span>
+	</div>			
+
+	<script type="text/javascript">
+
+		// get all the ul elements
+		var nl_button_list = document.querySelectorAll('#pseudoButtons > li');
+
+		// convert them into an array
+		var ar_button_list = Array.from(nl_button_list);
+
+		// assign an event listener to each (recall that forEach is a better for loop)
+		ar_button_list.forEach( function(elem){
+			elem.addEventListener("click", btn_click);
+		})
+
+		// this is the click event function
+		function btn_click() {
+			console.log(this);
+			this.style['background-color'] = "blue"
+
+		}
+
+	</script>
+</body>
+</html>

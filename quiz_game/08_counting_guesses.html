@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Quiz Game</title>
+	<style type="text/css">
+		body {
+			font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif;
+		}
+
+		div {
+			text-align: center;
+		}
+		.section_controls {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		.button_holder {
+			margin: auto;   /*working with containing div, this centers content*/
+			list-style: none;	/*to remove dot buttons*/
+			padding: 0; /*to remove padding at start*/
+			display: flex;
+		    align-items: flex-start;
+			flex-wrap: wrap;  /*so not all in one row*/
+			line-height: 50px; /*to set line height*/
+		}
+		.questions {
+			width: 720px;
+			border: 2px solid #AAA;
+		}
+		.controls {
+			padding: 15px;
+			width: 360px;
+			/*display: inline-block;*/
+		}
+		.button_holder li {
+			width: 150px;
+			margin: 15px;
+			background-color: #D3D3D3;
+		}
+		#btn_start {
+			background-color: green;
+		}
+		#btn_reset {
+			background-color: #BBB; 
+		}
+		.display_container {
+			width: 250px;
+			padding: 15px;
+			margin: 0px;
+			border: 2px solid #AAA;
+			text-align: center;
+		}
+		.bigger_font {
+			font-size: 1.2em;
+			font-weight: bold; 
+		}
+
+
+
+	</style>
+</head>
+<body>
+	<div id="main_section">
+		<h3>I am thinking of a random number - pick one!!!</h3>
+		<ul class="button_holder questions">
+			<li my_data=a guessed=false>One</li>
+			<li my_data=b guessed=false>Two</li>
+			<li my_data=c guessed=false>Three</li>
+			<li my_data=d guessed=false>Four</li>
+			<li my_data=e guessed=false>Five</li>
+			<li my_data=f guessed=false>Six</li>
+			<li my_data=g guessed=false>Seven</li>
+		</ul>
+
+	</div>
+	<div id="resp_section">
+		<div class="section_controls">
+		<ul class="button_holder controls">
+			<li id="btn_start" onclick="init_game()">START</li>
+			<li id="btn_reset" onclick="reset_game()">RESET</li>
+		</ul>
+		</div>
+		<div class="section_controls">
+			<p class="display_container">
+					<span class="bigger_font">Moves Remaining: </span><br>
+					<span id="moves">(press start to begin)</span>
+			</p>
+			
+		</div>
+		<span id="response"></span>
+	</div>		
+
+	<script type="text/javascript">
+		const UNSTARTED = 0;
+		const RUNNING = 1;
+		const FINISHED = 2;
+
+		const CORRECT = 0;
+		const INCORRECT = 1;
+		const GUESSED = 2;
+
+		var ar_button_list = Array.from( document.querySelectorAll('.questions > li') );
+
+		ar_button_list.forEach( function(elem){
+			elem.addEventListener("click", on_game_event);
+		});
+
+		function on_game_event(e) {
+			if (game_object.lifecycle === RUNNING) {
+
+				var guess_res = process_guess(this);
+
+				if (guess_res===CORRECT) {
+					win();
+				} else if (guess_res===INCORRECT) {
+					if (game_object.attempts_remaining==0) {
+						lose();
+					}
+				}
+			}
+		}
+
+		function process_guess(li) {
+			var already_guessed = li.getAttribute('guessed');
+			
+			if (already_guessed=='true') {
+				return GUESSED;
+			} else {
+				li.setAttribute('guessed',true);				// indicate this choice has been guessed
+
+				game_object.attempts_remaining--;
+				update_moves();
+
+				var choice = li.getAttribute('my_data');
+
+				if (game_object.correct_answer==choice) {
+					li.style['background-color'] = "green";		//correct
+					return CORRECT;
+				} else {
+					li.style['background-color'] = "red"		//incorrect
+					return INCORRECT;
+				}
+
+			}
+		}
+
+		function win() {
+			document.getElementById('response').innerHTML="WIN";
+			end_game();
+		}
+
+		function lose() {
+			document.getElementById('response').innerHTML="LOSE";
+			end_game();
+		}
+
+		function update_moves() {
+			var m = document.getElementById('moves');
+			m.innerHTML = game_object.attempts_remaining;
+		}
+
+		/* THIS IS THE OBJECT THAT CONTROLS THE GAME STATE */
+
+		var game_object = {
+			'lifecycle' : UNSTARTED,
+			'correct_answer' : null,
+			'attempts_remaining' : null
+		};
+
+
+		/* GAME LIFECYCLE TRANSITION METHODS */
+
+		function init_game() {
+			if (game_object.lifecycle === UNSTARTED) {
+				
+				// adjust lifecycle
+				game_object.lifecycle = RUNNING;
+
+				// change start button display
+				var b = document.getElementById('btn_start');
+				b.style.backgroundColor = "#4E7EFF";
+
+				// choose a right answer
+				var choices = ar_button_list.map( function(elem) {
+					elem.setAttribute('guessed',false);				// indicate this choice has been guessed
+	   				return elem.getAttribute('my_data');
+				})
+				var choice_number = Math.floor( choices.length * Math.random() );
+				game_object.correct_answer = choices[choice_number];
+				
+				// set remaining moves
+				game_object.attempts_remaining = 3;
+
+				update_moves();
+
+				// log the right answer
+				console.log( game_object.correct_answer )
+			}
+
+		}
+		function end_game() {
+
+			// make the start button appear inactive
+			var b = document.getElementById('btn_start');
+			b.style.backgroundColor = "#BBB";
+
+			// make the reset button appear active
+			var r = document.getElementById('btn_reset');
+			r.style.backgroundColor = "#FF75FF"
+
+			game_object.lifecycle = FINISHED;
+		}
+
+
+		function reset_game() {
+
+			if (game_object.lifecycle === FINISHED) {
+
+				// clear all the buttons
+				ar_button_list.forEach( function(elem){
+					elem.style.backgroundColor="#D3D3D3"
+				});
+				// clear the response
+				document.getElementById('response').innerHTML="";
+
+				// make the start button green
+				var b = document.getElementById('btn_start');
+				b.style.backgroundColor = "green";
+				
+				// make the reset button grey
+				var r = document.getElementById('btn_reset');
+				r.style.backgroundColor = "#BBB"
+
+				// reset the game state
+				game_object.lifecycle = UNSTARTED;
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Quiz Game</title>
+	<style type="text/css">
+		#resp_section {
+			background-color: #EEE;
+			margin-top: 100px;
+			clear: both;
+		}
+		#pseudoButtons li {
+			float: left;
+			list-style: none;
+			text-align: center;
+			background-color: #D3D3D3;
+			margin-right: 30px;
+			width: 150px;
+			line-height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id="main_section">
+		<h3>I am thinking of a random number - pick one!!!</h3>
+		<ul id="pseudoButtons">
+			<li my_data=1>One</li>
+			<li my_data=2>Two</li>
+			<li my_data=3>Three</li>
+			<li my_data=4>Four</li>
+		</ul>
+
+	</div>
+	<div id="resp_section">
+		<span id="response"></span>
+	</div>		
+
+	<script type="text/javascript">
+
+		var nl_button_list = document.querySelectorAll('#pseudoButtons > li');
+		var ar_button_list = Array.from(nl_button_list);
+
+		ar_button_list.forEach( function(elem){
+			elem.addEventListener("click", btn_click);
+		})
+
+		function btn_click() {
+			var response_elem = document.getElementById('response');
+			var choice = this.getAttribute('my_data');
+
+			if (game_object.correct_answer==choice) {
+				//correct
+				this.style['background-color'] = "green"
+				response_elem.innerHTML = "WIN";
+
+			} else {
+				//incorrect
+				this.style['background-color'] = "red"
+				response_elem.innerHTML = "incorrect";
+			}
+
+		}
+
+
+		var game_object = {
+			'correct_answer' : 3
+		};
+
+	</script>
+</body>
+</html>
